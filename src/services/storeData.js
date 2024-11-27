@@ -2,7 +2,7 @@ const { Firestore } = require('@google-cloud/firestore');
 
 async function storeData(id, data) {
   const db = new Firestore({
-    projectId: 'submissionmlgc-johan-442900',
+    projectId: 'submissionmlgc-johan10',
     databaseId: '(default)'
   });
   
