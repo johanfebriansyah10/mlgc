@@ -1,4 +1,5 @@
 const tf = require('@tensorflow/tfjs-node');
+const inputError = require('../exception/inputError')
 
 async function predictClassification(model, image) {
   try {
@@ -7,26 +8,24 @@ async function predictClassification(model, image) {
       .decodeJpeg(image)
       .resizeNearestNeighbor([224, 224])
       .expandDims() 
-      .toFloat();
+      .toFloat()
 
     const prediction = model.predict(tensor);
+    const score = await prediction.data();
+    const predictionData = Math.max(...score) * 100;
 
-
-    const predictionData = await prediction.data();
+    let result = {
+      predictionData,
+      label: 'Cancer',
+      suggestion: 'Segera periksa ke Dokter!'
+    };
     
-    const classes = ['Cancer', 'Non-cancer'];
-    const classResult = tf.argMax(prediction, 1).dataSync()[0];
-    const label = classes[classResult];
-
-    let suggestion;
-    if (label === 'Cancer') {
-      suggestion = 'Segera periksa ke dokter!';
-    } else if (label === 'Non-cancer') {
-      suggestion = 'Penyakit kanker tidak terdeteksi.';
+    if(predictionData < 1){
+      result.label = 'Non-cancer';
+      result.suggestion = 'Penyakit kanker tidak terdeteksi.'
     }
 
-    return { label, suggestion, predictionData };
-
+    return result;
 
   } catch (error) {
     console.error('Error during prediction:', error);
