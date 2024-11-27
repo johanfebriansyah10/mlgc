@@ -1,10 +1,14 @@
 const { Firestore } = require('@google-cloud/firestore');
-const db = new Firestore();
 
 async function storeData(id, data) {
+  const db = new Firestore({
+    projectId: 'submissionmlgc-johan-442900',
+    databaseId: '(default)'
+  });
+  
   const predictCollection = db.collection('prediction');
   return predictCollection.doc(id).set(data);
-};
+}
 
 
 function docData(doc){
@@ -24,13 +28,13 @@ async function getHistory(id = null) {
   if(id){
     const doc = await predictCollection.doc(id).get();
     if(!doc.exists) return null;
-    return modelData(doc);
+    return docData(doc);
   } else{
     const snapshot = await predictCollection.get();
     const allData = [];
-    snapshot.forEach(doc => allData.push(modelData(doc)));
+    snapshot.forEach(doc => allData.push(docData(doc)));
     return allData;
   }
 }
 
-module.exports = { storeData, getHistory }
+module.exports =  { storeData, getHistory }

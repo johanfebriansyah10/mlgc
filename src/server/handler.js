@@ -34,21 +34,22 @@ async function getPredict(request, h) {
   const { id } = request.params;
   const data = await getHistory(id);
 
-  if(!data){
+
+  if (!data) {
     const response = h.response({
-      status: 'fail',
-      message: 'Data tidak ditemukan',
-    });
-    response.code(404);
-    return response;
+			status: "fail",
+			message: "Tidak ditemukan",
+		});
+		response.code(404);
+		return response;
   }
 
   const response = h.response({
-    status: 'success',
-    data,
-  });
-  response.code(200);
-  return response;
+		status: "success",
+		data,
+	});
+	response.code(200);
+	return response;
 }
 
 module.exports = { predictHandler, getPredict };
