@@ -1,4 +1,4 @@
-const predictHandler = require('../server/handler');
+const { predictHandler, getPredict } = require('../server/handler');
 
 const routes = [
   {
@@ -13,6 +13,11 @@ const routes = [
       },
     },
   },
+  {
+    path: '/predict/history',
+    method: 'GET',
+    handler: getPredict,
+  }
 ];
 
 module.exports = routes;

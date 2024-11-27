@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const predictClassification = require('../services/inferencesService');
+const { storeData, getHistory } = require('../services/storeData');
 
 async function predictHandler(request, h) {
 
@@ -18,6 +19,8 @@ async function predictHandler(request, h) {
     createdAt,
   };
 
+  await storeData(id, data)
+
   const response = h.response({
     status: 'success',
     message: predictionData > 0 ? 'Model Berhasil Melakukan Prediksi' : 'coba gunakan foto yang sesuai',
@@ -27,4 +30,25 @@ async function predictHandler(request, h) {
   return response;
 }
 
-module.exports = predictHandler;
+async function getPredict(request, h) {
+  const { id } = request.params;
+  const data = await getHistory(id);
+
+  if(!data){
+    const response = h.response({
+      status: 'fail',
+      message: 'Data tidak ditemukan',
+    });
+    response.code(404);
+    return response;
+  }
+
+  const response = h.response({
+    status: 'success',
+    data,
+  });
+  response.code(200);
+  return response;
+}
+
+module.exports = { predictHandler, getPredict };
